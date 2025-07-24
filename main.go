@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -159,14 +160,29 @@ func printStats(stats LoadTestStats) {
 }
 
 func main() {
+	// Define command line flags
+	var (
+		url          = flag.String("url", "http://localhost:8080", "Target URL to test")
+		requests     = flag.Int("requests", 100, "Total number of requests")
+		concurrency  = flag.Int("concurrency", 10, "Number of concurrent workers")
+		expectedCode = flag.Int("status", 200, "Expected HTTP status code")
+		expectedBody = flag.String("body", "", "Expected response body content")
+		timeout      = flag.Int("timeout", 5, "Request timeout in seconds")
+	)
+
+	flag.Parse()
+
 	config := RequestConfig{
-		URL:            "http://example.com",
-		ExpectedStatus: http.StatusOK,
-		ExpectedBody:   "Example Domain",
-		Timeout:        5 * time.Second,
+		URL:            *url,
+		ExpectedStatus: *expectedCode,
+		ExpectedBody:   *expectedBody,
+		Timeout:        time.Duration(*timeout) * time.Second,
 	}
 
-	// Run load test with 100 requests and 10 concurrent workers
-	stats := runLoadTest(config, 1000, 100)
+	fmt.Printf("Testing URL: %s\n", config.URL)
+	fmt.Printf("Expected Status: %d\n", config.ExpectedStatus)
+	fmt.Printf("Expected Body Contains: %s\n", config.ExpectedBody)
+
+	stats := runLoadTest(config, *requests, *concurrency)
 	printStats(stats)
 }

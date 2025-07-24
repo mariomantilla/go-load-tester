@@ -4,10 +4,10 @@ This project is a simple HTTP request load tester written in Go. Its purpose is 
 
 ## Features
 
-- **Configurable Target**: Set the URL, expected status code, and expected response body.
+- **Configurable Target**: Set the URL, expected status code, and expected response body (string that must contain to be considered valid).
 - **Timeouts**: Specify a timeout for each request.
-- **Result Reporting**: See if the request succeeded, the status code, error (if any), and response time.
-- **(Planned)**: Support for total requests and max concurrency to simulate load.
+- **Concurrent Requests**: Set the total number of requests and the maximum number of concurrent workers.
+- **Statistics**: After the test, see total requests, successful and failed requests, success rate, average, minimum, and maximum response times.
 
 ## Usage
 
@@ -24,35 +24,33 @@ This project is a simple HTTP request load tester written in Go. Its purpose is 
 
 3. **Run the tester:**
    ```sh
-   ./load-tester
+   ./load-tester [flags]
    ```
 
-   By default, it sends a single request to `http://example.com` and checks for a 200 OK status and the presence of "Example Domain" in the response body.
+## Command-Line Flags
 
-## Configuration
+- `-url` (string): Target URL to test (default: `http://localhost:8080`)
+- `-requests` (int): Total number of requests to send (default: `100`)
+- `-concurrency` (int): Number of concurrent workers (default: `10`)
+- `-status` (int): Expected HTTP status code (default: `200`)
+- `-body` (string): Expected response body content (default: `""`)
+- `-timeout` (int): Request timeout in seconds (default: `5`)
 
-Edit the `main.go` file to change the request parameters:
+### Example
 
-```go
-config := RequestConfig{
-    URL:            "http://example.com",
-    ExpectedStatus: http.StatusOK,
-    ExpectedBody:   "Example Domain",
-    Timeout:        5 * time.Second,
-}
+```sh
+./load-tester -url http://localhost:8080 -requests 200 -concurrency 20 -status 200 -body "OK" -timeout 3
 ```
 
-## Roadmap
+## Output
 
-- [ ] Add support for specifying total number of requests
-- [ ] Add support for setting maximum concurrency
-- [ ] Aggregate and report statistics (success rate, average response time, etc.)
-- [ ] Command-line flags for configuration
+After running, the tool prints:
 
-## Requirements
+- The URL and expectations being tested
+- Progress and completion time
+- A summary including:
+  - Total Requests
+  - Successful and Failed Requests
+  - Success Rate
+  - Average, Min, and Max Response Times
 
-- Go 1.18 or newer
-
-## License
-
-MIT License
