@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func RunLoadTest(config config.RequestConfig, numRequests int, concurrency int) stats.LoadTestStats {
+func RunLoadTest(config config.RequestConfig, numRequests int, concurrency int, makeRequest func(config.RequestConfig) client.TestResult) stats.LoadTestStats {
 	results := make(chan client.TestResult, numRequests)
 
 	// Use a semaphore to limit concurrency
@@ -48,7 +48,7 @@ func RunLoadTest(config config.RequestConfig, numRequests int, concurrency int) 
 			semaphore <- struct{}{}
 
 			// Make request
-			result := client.MakeRequest(config)
+			result := makeRequest(config)
 			results <- result
 			progressChan <- struct{}{}
 			// Release semaphore

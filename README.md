@@ -12,6 +12,7 @@ Go Load Tester is a flexible HTTP load testing tool written in Go. It helps you 
 - **Breakdowns**: Get HTTP status code and error type breakdowns.
 - **Output Formats**: Print results in human-readable or JSON format.
 
+
 ## Usage
 
 1. **Clone the repository:**
@@ -22,12 +23,17 @@ Go Load Tester is a flexible HTTP load testing tool written in Go. It helps you 
 
 2. **Build the project:**
    ```sh
-   go build -o loadtester ./cmd/loadtester
+   make build
    ```
 
-3. **Run the tester:**
+3. **Run all tests:**
    ```sh
-   ./loadtester [flags]
+   make test
+   ```
+
+4. **Run the tester:**
+   ```sh
+   ./bin/loadtester [flags]
    ```
 
 ## Command-Line Flags
