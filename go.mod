@@ -1,3 +1,3 @@
-module load-tester
+module loadtester
 
 go 1.24.5
