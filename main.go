@@ -152,8 +152,8 @@ func makeRequest(config RequestConfig) TestResult {
 			TLSHandshakeTimeout:   10 * time.Second,
 			ResponseHeaderTimeout: 10 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,
-			MaxIdleConns:          min(config.Concurrency, 20), // Limit max idle connections
-			MaxIdleConnsPerHost:   min(config.Concurrency, 20),
+			MaxIdleConns:          config.Concurrency, // Limit max idle connections
+			MaxIdleConnsPerHost:   config.Concurrency,
 			// Skip TLS verification for testing (optional)
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
 		},
@@ -284,7 +284,7 @@ func collectAndCalculateStats(results chan TestResult, testStart time.Time) Load
 		ErrorBreakdown:  make(map[ErrorType]int),
 		StatusBreakdown: make(map[int]int),
 		ResponseTimes:   make([]time.Duration, 0),
-		TestDuration:    time.Since(testStart),
+		TestDuration:    0,
 	}
 	var totalTime time.Duration
 
@@ -315,6 +315,8 @@ func collectAndCalculateStats(results chan TestResult, testStart time.Time) Load
 			stats.MaxTime = result.ResponseTime
 		}
 	}
+
+	stats.TestDuration = time.Since(testStart)
 
 	if stats.TotalRequests > 0 {
 		stats.SuccessRate = float64(stats.SuccessfulReqs) / float64(stats.TotalRequests) * 100
